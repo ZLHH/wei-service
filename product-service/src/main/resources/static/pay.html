@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>果然新鲜</title>
+    <link href="css/orange.css"rel="stylesheet">
+    <link href="css/tanchuang.css"rel="stylesheet">
+    <link href="css/common.css"rel="stylesheet">
+    <link href="css/share.css"rel="stylesheet">
+    <link href="css/user.css" rel="stylesheet" type="text/css"/>
+    <script src="js/jquery-1.12.3.js"></script>
+    <script type="text/javascript" src="js/jquery.SuperSlide.2.1.1.js"></script>
+    <link rel="stylesheet" href="js/layui/css/layui.css" />
+    <link rel="stylesheet" href="js/eleme-ui/index.css" />
+    <link rel="stylesheet" href="css/ShoppingCart.css" />
+    <link rel="stylesheet" type="text/css" href="css/css.css" />
+    <script type="text/javascript">
+        $(function() {
+            var ele = $(".Caddress");
+            $(ele).empty();
+            $.ajax({
+                url: '/order/adresslist',
+                type: 'GET',
+                success: function (data) {
+                    if (data.code == 100) {
+                        var list = data.map.pageInfo.list;
+                        console.log(list);
+                        var num=0;
+                        $(list).each(function (index, data) {
+                            console.log(data);
+                            var ProductInfo = '<div class="add_mi"><p class="name" style="border-bottom:1px dashed #ccc;line-height:28px;">'+data.name+'</p><p class="adress" style="border-bottom:1px dashed #ccc;line-height:28px;">'+data.adress+'</p><p class="phone">'+data.phone+'</p></div>';
+                            $(ele).append(ProductInfo);
+                        });
+                        var plusAdress = '<div class="add">\n' +
+                            '        <div  onclick="javascript:onclick_open();">\n' +
+                            '            <img src="images/69-Plus.png" />\n' +
+                            '        </div>\n' +
+                            '    </div>'
+                        $(ele).append(plusAdress);
+
+                        $('.Caddress .add_mi').click(function() {
+                            $(this).css('background', 'url("images/mail_1.jpg") no-repeat').siblings('.add_mi').css('background', 'url("images/mail.jpg") no-repeat')
+                            console.log(this.innerText);
+                            sessionStorage.setItem("adress", this.innerText);
+                        })
+
+                    }else {
+                        alert(data.msg);
+                    }
+                }
+            });
+        })
+        $(function() {
+            var region = $("#region");
+            var address = $("#address");
+            var number_this = $("#number_this");
+            var name = $("#name_");
+            var phone = $("#phone");
+            $("#sub_setID").click(function() {
+                var input_out = $(".input_style");
+                for (var i = 0; i <= input_out.length; i++) {
+                    if ($(input_out[i]).val() == "") {
+                        $(input_out[i]).css("border", "1px solid red");
+                        return false;
+                    } else {
+                        $(input_out[i]).css("border", "1px solid #cccccc");
+                    }
+                }
+            });
+            var span_momey = $(".span_momey");
+            var b = 0;
+            for (var i = 0; i < span_momey.length; i++) {
+                b += parseFloat($(span_momey[i]).html());
+            }
+            var out_momey = $(".out_momey");
+            out_momey.html(b);
+            $(".shade_content").hide();
+            $(".shade").hide();
+            $('.nav_mini ul li').hover(function() {
+                $(this).find('.two_nav').show(100);
+            }, function() {
+                $(this).find('.two_nav').hide(100);
+            })
+            $('.left_nav').hover(function() {
+                $(this).find('.nav_mini').show(100);
+            }, function() {
+                $(this).find('.nav_mini').hide(100);
+            })
+            $('#jia').click(function() {
+                $('input[name=num]').val(parseInt($('input[name=num]').val()) + 1);
+            })
+            $('#jian').click(function() {
+                $('input[name=num]').val(parseInt($('input[name=num]').val()) - 1);
+            })
+            $('.Caddress .add_mi').click(function() {
+                $(this).css('background', 'url("images/mail_1.jpg") no-repeat').siblings('.add_mi').css('background', 'url("images/mail.jpg") no-repeat')
+            })
+        })
+        var x = Array();
+
+        function func(a, b) {
+            x[b] = a.html();
+            alert(x)
+            a.css('border', '2px solid #f00').siblings('.min_mx').css('border', '2px solid #ccc');
+        }
+
+        function onclick_close() {
+            var shade_content = $(".shade_content");
+            var shade = $(".shade");
+            if (confirm("确认关闭么！此操作不可恢复")) {
+                shade_content.hide();
+                shade.hide();
+            }
+        }
+
+        function onclick_open() {
+            $(".shade_content").show();
+            $(".shade").show();
+            var input_out = $(".input_style");
+            for (var i = 0; i <= input_out.length; i++) {
+                if ($(input_out[i]).val() != "") {
+                    $(input_out[i]).val("");
+                }
+            }
+        }
+
+        function onclick_remove(r) {
+            if (confirm("确认删除么！此操作不可恢复")) {
+                var out_momey = $(".out_momey");
+                var input_val = $(r).parent().prev().children().eq(1).val();
+                var span_html = $(r).parent().prev().prev().children().html();
+                var out_add = parseFloat(input_val).toFixed(2) * parseFloat(span_html).toFixed(2);
+                var reduce = parseFloat(out_momey.html()).toFixed(2)- parseFloat(out_add).toFixed(2);
+                console.log(parseFloat(reduce).toFixed(2));
+                out_momey.text(parseFloat(reduce).toFixed(2))
+                $(r).parent().parent().remove();
+            }
+        }
+
+        /*添加地址*/
+        function saveAdress(){
+            var name = $("#name").val();
+            var phone = $("#phone").val();
+            var adress = $("#adress").val();
+            console.log(name,phone,adress);
+            $.ajax({
+                url: '/order/saveAdress',
+                type: 'POST',
+                data: "name=" + name + "&phone=" + phone+"&adress="+adress,
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == '100') {
+                        alert(data.msg);
+                        window.location.href='../pay.html';
+                    } else {
+                        alert(data.msg);;
+                    }
+                }
+            });
+        }
+
+
+
+        function onclick_btnAdd(a) {
+            var out_momey = $(".out_momey");
+            var input_ = $(a).prev();
+            var input_val = $(a).prev().val();
+            var input_add = parseInt(input_val) + 1;
+            input_.val(input_add);
+            var btn_momey = parseFloat($(a).parent().prev().children().html());
+            var out_momey_float = parseFloat(out_momey.html()) + btn_momey;
+            out_momey.text(out_momey_float.toFixed(2));
+        }
+
+        function onclick_reduce(b) {
+            var out_momey = $(".out_momey");
+            var input_ = $(b).next();
+            var input_val = $(b).next().val();
+            if (input_val <= 1) {
+                alert("商品个数不能小于1！")
+            } else {
+                var input_add = parseInt(input_val) - 1;
+                input_.val(input_add);
+                var btn_momey = parseFloat($(b).parent().prev().children().html());
+                var out_momey_float = parseFloat(out_momey.html()) - btn_momey;
+                out_momey.text(out_momey_float.toFixed(2));
+            }
+        }
+
+       function saveOrder()  {
+            var username= window.sessionStorage.getItem("adress");
+            if (username==null){
+                alert("请点击请选择地址");
+                return false;
+            }
+           alert(username.split(/[\n]/));
+            if (username.split(/[\n]/).length>5){
+                var name = username.split(/[\n]/)[0];
+                var phone = username.split(/[\n]/)[4];
+                var adress = username.split(/[\n]/)[2];
+            }else {
+                var name = username.split(/[\n]/)[0];
+                var phone = username.split(/[\n]/)[1];
+                var adress = username.split(/[\n]/)[2];
+            }
+
+           sessionStorage.clear();
+           var ids = new Array();
+           for(var i=0; i<localStorage.length;i++){
+               ids.push(localStorage.key(i));
+           }
+            $.ajax({
+                url: '/order/saveOrder',
+                type: 'POST',
+                data: "name=" + name + "&phone=" + phone +"&adress="+ adress +"&ids="+JSON.stringify(ids),
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == '100') {
+                        if (data.msg=="请先登录!"){
+                            return false;
+                        }
+                        alert(data.msg);
+                    } else {
+                        alert(data.msg);;
+                    }
+                }
+            });
+        }
+
+    </script>
+</head>
+<body>
+<div class="right">
+    <span class="left">&nbsp;</span>
+    <div id="loginbox">
+    </div>
+</div>
+<!--顶部导航-->
+<div class="headr">
+    <div class="heard-con">
+        <img src="images/logo.jpg" style="margin-top: 7px;float: left;position: absolute">
+        <div class="headr-nav">
+            <ul>
+                <li><a href="index.html">首页</a> </li>
+                <li><a href="hot.html">热卖商品</a> </li>
+                <li><a href="produ.html">全部产品</a> </li>
+                <li><a href="consult.html">最新资讯</a></li>
+                <li><a href="touch.html">联系我们</a> </li>
+            </ul>
+            <div class="sptopfoot">
+                <div class="spbottom"  >
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--顶部导航结束-->
+<!--banner图片-->
+<div class="her-banner">
+
+</div>
+<!--banner图片结束-->
+<div class="Caddress">
+    <div class="add_mi">
+        <p style="border-bottom:1px dashed #ccc;line-height:28px;">浙江杭州(爸爸收)</p>
+        <p>萧山 北干 明怡花苑53幢3单元 13735683918</p>
+    </div>
+    <div class="add_mi">
+        <p style="border-bottom:1px dashed #ccc;line-height:28px;">浙江杭州(爸爸收)</p>
+        <p>萧山 北干 明怡花苑53幢3单元 13735683918</p>
+    </div>
+    <div class="add_mi">
+        <p style="border-bottom:1px dashed #ccc;line-height:28px;">浙江杭州(爸爸收)</p>
+        <p>萧山 北干 明怡花苑53幢3单元 13735683918</p>
+    </div>
+    <div class="add_mi">
+        <p style="border-bottom:1px dashed #ccc;line-height:28px;">浙江杭州(爸爸收)</p>
+        <p>萧山 北干 明怡花苑53幢3单元 13735683918</p>
+    </div>
+    <div class="add_mi">
+        <p style="border-bottom:1px dashed #ccc;line-height:28px;">浙江杭州(爸爸收)</p>
+        <p>萧山 北干 明怡花苑53幢3单元 13735683918</p>
+    </div>
+    <div class="add">
+        <div  onclick="javascript:onclick_open();">
+            <img src="images/69-Plus.png" />
+        </div>
+    </div>
+</div>
+
+<!--
+    作者：z@163.com
+    时间：2016-03-01
+    描述：shade 遮罩层
+-->
+<div class="shade">
+</div>
+<!--
+    作者：z@163.com
+    时间：2016-03-02
+    描述：shade_content
+-->
+<div class="shade_content">
+    <div class="col-xs-12 shade_colse">
+        <button onclick="javascript:onclick_close();">x</button>
+    </div>
+    <div class="nav shade_content_div">
+        <div class="col-xs-12 shade_title">
+            新增收货地址
+        </div>
+        <div class="col-xs-12 shade_from">
+            <form>
+
+                <div class="col-xs-12">
+                    <span class="span_style" class="span_sty">姓&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;名</span>
+                    <input class="input_style" type="" name="" id="name" value="" placeholder="&nbsp;&nbsp;请输入您的姓名" />
+                </div>
+                <div class="col-xs-12">
+                    <span class="span_style">手机号码</span>
+                    <input class="input_style" type="" name="" id="phone" value="" placeholder="&nbsp;&nbsp;请输入您的手机号码" />
+                </div>
+                <div class="col-xs-12">
+                    <span class="span_style">详细地址</span>
+                    <input class="input_style" type="" name="" id="adress" value="" placeholder="&nbsp;&nbsp;请输入您的详细地址" />
+                </div>
+                <div class="col-xs-12">
+                    <input class="btn_remove" type="button" id="" onclick="javascript:onclick_close();" value="取消" />
+                    <input class="sub_set" id="sub_setID" onclick="javascript:saveAdress();" value="提交" />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="row " id="myVue" v-cloak>
+    <div class="col-lg-10 col-lg-offset-1" >
+        <div class="layui-form">
+            <table class="ShopCartTable layui-table">
+                <thead>
+                <tr>
+                    <th class="selectLeft">
+                        <span class="selectLeftGoods">商品</span>
+                    </th>
+                    <th>单价</th>
+                    <th>数量</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="(tabledatas,index) in shopTableDatas">
+                    <td  class="selectLeft">
+                        <span class="goodName">
+								<img class="goodImg" :src="tabledatas.src" />
+							</span>
+                        <span class="goodName goodsName">
+								<h2 class="goodname" v-text="tabledatas.productName"></h2>
+                        </span>
+                    </td>
+                    <td class="danPrice">{{tabledatas.productPrice | moneyFiler}}</td>
+                    <td>
+                        <i @click="goodNum(tabledatas,-1)" class="fa  deleteBtn" aria-hidden="true">-</i>
+                        <input v-model="tabledatas.counts" type="text" class="form-control numInput" aria-label="...">
+                        <i @click="goodNum(tabledatas,1)" class="fa  addBtn" aria-hidden="true">+</i>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!--主页内容-->
+<div class="uright">
+    <div class="uhead">订单支付</div>
+    <div class="ui_mainBox">
+        <div class="ui_bankBox">
+            <form action="pay/payOrder" method="post">
+                <table cellpadding="0" cellspacing="0">
+                    <tr>
+                        <th valign="top">支付方式：</th>
+                        <td>
+                            <div class="pay-con">
+                                <ul class="bank">
+                                    <li>
+                                        <label>
+                                            <input type="radio" name="pd_FrpIds" value="ICBC-NET-B2C" checked/>
+                                            <img src="images/gongshang.gif" border="0"/>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label>
+                                            <input type="radio" name="pd_FrpIds" value="CMBCHINA-NET-B2C"/>
+                                            <img src="images/zhaohang.gif" border="0"/>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label>
+                                            <input type="radio" name="pd_FrpIds" value="ABC-NET-B2C"/>
+                                            <img src="images/nongye.gif" border="0"/>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label>
+                                            <input type="radio" name="pd_FrpIds" value="CCB-NET-B2C">
+                                            <img src="images/jianshe.gif" border="0"/>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label>
+                                            <input type="radio" name="pd_FrpIds" value="BCCB-NET-B2C"/>
+                                            <img src="images/beijing.gif" border="0"/>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label>
+                                            <input type="radio" name="pd_FrpIds" value="BOCO-NET-B2C"/>
+                                            <img src="images/jiaotong.gif" border="0"/>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label>
+                                            <input type="radio" name="pd_FrpIds" value="CIB-NET"/>
+                                            <img src="images/xingye.gif" border="0"/>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label>
+                                            <input type="radio" name="pd_FrpIds" value="CMBC-NET"/>
+                                            <img src="images/minsheng.gif" border="0"/>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label>
+                                            <input type="radio" name="pd_FrpIds" value="CEB-NET"/>
+                                            <img src="images/guangda.gif" border="0"/>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label>
+                                            <input type="radio" name="pd_FrpIds" value="BOC-NET"/>
+                                            <img src="images/zhongguo.gif" border="0"/>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label>
+                                            <input type="radio" name="pd_FrpIds" value="PINGANBANK-NET">
+                                            <img src="images/pingan.gif" border="0"/>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label>
+                                            <input type="radio" name="pd_FrpIds" value="ECITIC-NET-B2C">
+                                            <img src="images/zhongxin.gif" border="0"/>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label>
+                                            <input type="radio" name="pd_FrpIds" value="SDB-NET-B2C"/>
+                                            <img src="images/shenfa.gif" border="0"/>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label>
+                                            <input type="radio" name="pd_FrpIds" value="GDB-NET-B2C"/>
+                                            <img src="images/guangfa.gif" border="0"/>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label>
+                                            <input type="radio" name="pd_FrpIds" value="SHB-NET-B2C"/>
+                                            <img src="images/shanghaibank.gif" border="0"/>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label>
+                                            <input type="radio" name="pd_FrpIds" value="SPDB-NET-B2C"/>
+                                            <img src="images/shangpufa.gif" border="0"/>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label>
+                                            <input type="radio" name="pd_FrpIds" value="POST-NET-B2C"/>
+                                            <img src="images/youzheng.gif" border="0"/>
+                                    </label>
+                                    </li>
+                                    <li>
+                                        <label>
+                                            <input type="radio" name="pd_FrpIds" value="BJRCB-NET-B2C"/>
+                                            <img src="images/nongcunshangye.gif" border="0"/>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label>
+                                            <input type="radio" name="pd_FrpIds" value="HXB-NET-B2C"/>
+                                            <img src="images/huaxia.gif" border="0"/>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label>
+                                            <input type="radio" name="pd_FrpIds" value="ZFB"/>
+                                            <img disabled="disabled" alt="" src="images/zfb.jpg">
+                                        </label>
+                                    </li>
+                                </ul>
+                                <div class="clear"></div>
+                                <p class="pay-tj">
+                                    <input type="submit" name="imgYeePay" value="确认付款" onclick="return saveOrder();" id="imgYeePay" class="butn"/>
+                                </p>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </div>
+</div>
+<!--主页内容结束-->
+<!--底部-->
+<div class="footer">
+    <div class="ft-con">
+        <div class="ft-top">
+            <img src="images/fot-1.jpg">
+        </div>
+        <div class="ft-bo">
+            <div class="ft-b">
+                <h3>服务保障</h3>
+                <p>正品保证</p>
+                <p>7天无理由退换</p>
+                <p>退货返运费</p>
+                <p>7X15小时客户服务</p>
+
+            </div>
+            <div class="ft-b">
+                <h3>支付方式</h3>
+                <p>公司转账</p>
+                <p>货到付款</p>
+                <p>在线支付</p>
+                <p>分期付款</p>
+
+            </div>
+            <div class="ft-b">
+                <h3>商家服务</h3>
+                <p>商家入驻</p>
+                <p>培训中心</p>
+                <p>广告服务</p>
+                <p>服务市场</p>
+
+            </div>
+            <div class="ft-b">
+                <h3>服务保障</h3>
+                <p>免运费</p>
+                <p>海外配送</p>
+                <p>EMS</p>
+                <p>211限时达</p>
+
+            </div>
+
+        </div>
+        <div class="banq">
+            <p>©2016 果然新鲜 版权所有</p>
+            <p>手机版 | 本站使用<span><img src="images/ft.jpg"></span>建站搭建 | 管理登录</p>
+        </div>
+
+    </div>
+
+</div>
+<!--底部结束-->
+<script src="js/banner.js"></script>
+<script type="text/javascript" src="js/vue/vue.min.js" ></script>
+<script type="text/javascript" src="js/eleme-ui/index.js" ></script>
+<script type="text/javascript" src="js/pay.js" ></script>
+</body>
+</html>

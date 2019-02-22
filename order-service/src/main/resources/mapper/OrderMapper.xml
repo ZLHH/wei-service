@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.orderservice.dao.OrderDAO">
+
+    <resultMap  type="com.example.orderservice.domain.Adress" id="adressInfo">
+        <id column="id"  property="id" />
+        <id column="name"  property="name" />
+        <result column="phone"  property="phone" />
+        <result column="adress"  property="adress" />
+        <result column="user_id"  property="userId" />
+    </resultMap>
+
+
+    <insert id="saveOrderMaster" parameterType="com.example.orderservice.domain.OrderMaster" useGeneratedKeys="true" keyProperty="id">
+        insert into order_master
+        (
+        `order_id`,
+        `buyer_name`,
+        `buyer_phone`,
+        `buyer_address`,
+        `buyer_openid`,
+        `order_amount`,
+        `order_status`,
+        `pay_status`,
+        `create_time`
+        )
+        values
+        (
+        #{orderId},
+        #{buyerName},
+        #{buyerPhone},
+        #{buyerAddress},
+        #{buyerOpenid},
+        #{orderAmount},
+        #{orderStatus},
+        #{payStatus},
+        #{createTime}
+        )
+    </insert>
+
+    <insert id="saveOrderDetail" parameterType="com.example.orderservice.domain.OrderDetail" useGeneratedKeys="true" keyProperty="id">
+        insert into order_detail
+        (
+        `detail_id`,
+        `order_id`,
+        `product_id`,
+        `product_name`,
+        `product_price`,
+        `product_quantity`,
+        `create_time`
+        )
+        values
+        (
+        #{detailId},
+        #{orderId},
+        #{productId},
+        #{productName},
+        #{productPrice},
+        #{productQuantity},
+        #{createTime}
+        )
+    </insert>
+
+    <insert id="saveAdress" parameterType="com.example.orderservice.domain.Adress" useGeneratedKeys="true" keyProperty="id">
+        insert into adress
+        (
+        `name`,
+        `phone`,
+        `adress`,
+        `user_id`,
+        `create_time`
+        )
+        values
+        (
+        #{name},
+        #{phone},
+        #{adress},
+        #{userId},
+        #{createTime}
+        )
+    </insert>
+
+
+    <select id="showAdress" resultMap="adressInfo">
+        select * from adress where user_id=#{userid};
+    </select>
+
+
+    <update id="changeOrderStatusById">
+        update order_master set pay_status = 1,update_time=#{updateTime} where order_id = #{orderId}
+    </update>
+
+    <update id="reduce">
+        update product_info set product_stock = product_stock-#{counts} where product_id = #{id}
+    </update>
+
+</mapper>
+

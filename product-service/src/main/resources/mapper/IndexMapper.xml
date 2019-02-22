@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.example.productservice.dao.IndexDAO">
+  <resultMap  type="com.example.productservice.domain.ProductInfo" id="ProductInfo">
+    <id column="product_id"  property="ProductId" />
+    <result column="product_name"  property="ProductName" />
+    <result column="product_price"  property="ProductPrice" />
+    <result column="product_stock"  property="ProductStock" />
+    <result column="product_description"   property="ProductDescription" />
+    <result column="category_type"  property="CategoryType" />
+    <result column="product_icon"  property="ProductIcon" />
+  </resultMap>
+
+  <resultMap  type="com.example.productservice.domain.UserMain" id="UserMainResult">
+    <id column="id"  property="id" />
+    <result column="name"  property="name" />
+    <result column="email"  property="email" />
+    <result column="nick_name"  property="nickName" />
+    <result column="role"   property="role" />
+    <result column="status"   property="status" />
+    <result column="create_time"  property="createTime" />
+  </resultMap>
+
+
+  <select id="querryAll" resultMap="ProductInfo">
+    select  * from  product_info WHERE 'product_status'=0  ORDER BY create_time DESC limit 6
+  </select>
+
+  <select id="getProductById" resultMap="ProductInfo">
+    select * from product_info where product_id=#{id}
+  </select>
+
+  <select id="getAllUser" resultMap="UserMainResult">
+    select * from user_main
+  </select>
+
+</mapper>
+

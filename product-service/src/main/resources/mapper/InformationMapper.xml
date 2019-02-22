@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.example.productservice.dao.InformationDAO">
+  <resultMap  type="com.example.productservice.domain.Information" id="Information">
+    <id column="id"  property="id" />
+    <result column="title"  property="title" />
+    <result column="information"  property="information" />
+    <result column="create_time"  property="createTime" />
+  </resultMap>
+
+
+  <select id="querryAll" resultMap="Information">
+    SELECT * FROM information
+  </select>
+
+  <select id="getInformationById" resultMap="Information">
+    select * from information where id=#{id}
+  </select>
+
+</mapper>
+

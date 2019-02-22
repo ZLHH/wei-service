@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>果然新鲜</title>
+    <link href="css/orange.css"rel="stylesheet">
+    <link href="css/tanchuang.css"rel="stylesheet">
+    <link href="css/common.css"rel="stylesheet">
+    <link href="css/share.css"rel="stylesheet">
+    <link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="js/jquery-1.12.3.js"></script>
+    <script type="text/javascript" src="js/jquery.SuperSlide.2.1.1.js"></script>
+    <link rel="stylesheet" href="js/layui/css/layui.css" />
+    <link rel="stylesheet" href="js/eleme-ui/index.css" />
+    <link rel="stylesheet" href="css/ShoppingCart.css" />
+</head>
+<body>
+<div class="right">
+    <span class="left">&nbsp;</span>
+    <div id="loginbox">
+    </div>
+</div>
+<!--顶部导航-->
+<div class="headr">
+    <div class="heard-con">
+        <img src="images/logo.jpg" style="margin-top: 7px;float: left;position: absolute">
+        <div class="headr-nav">
+            <ul>
+                <li><a href="index.html">首页</a> </li>
+                <li><a href="hot.html">热卖商品</a> </li>
+                <li><a href="produ.html">全部产品</a> </li>
+                <li><a href="consult.html">最新资讯</a></li>
+                <li><a href="touch.html">联系我们</a> </li>
+            </ul>
+            <div class="sptopfoot">
+                <div class="spbottom"  >
+                </div>
+            </div>
+        </div>
+        <div class="headr-right">
+            <i class="glyphicon glyphicon-shopping-cart" style="font-size: 16px;margin-right: 10px"></i>
+        </div>
+    </div>
+</div>
+<!--顶部导航结束-->
+<!--banner图片-->
+<div class="her-banner">
+
+</div>
+<!--banner图片结束-->
+<!--主页内容-->
+<!--主要内容-->
+<div class="row " id="myVue" v-cloak>
+    <div class="col-lg-10 col-lg-offset-1" >
+        <div class="layui-form">
+            <table class="ShopCartTable layui-table">
+                <thead>
+                <tr>
+                    <th class="selectLeft">
+                        <template>
+                            <el-checkbox  @change="checkedAllBtn(checkedAll)" v-model="checkedAll">全选</el-checkbox>
+                        </template>
+                        <span class="selectLeftGoods">商品</span>
+                    </th>
+                    <th>单价</th>
+                    <th>数量</th>
+                    <th>小计</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="(tabledatas,index) in shopTableDatas">
+                    <td  class="selectLeft">
+                        <template>
+                            <el-checkbox @change="checkedRadioBtn(tabledatas)" v-model="tabledatas.checked"></el-checkbox>
+                        </template>
+                        <span class="goodName">
+								<img class="goodImg" :src="tabledatas.src" />
+							</span>
+                        <span class="goodName goodsName">
+								<h2 class="goodname" v-text="tabledatas.productName"></h2>
+                        </span>
+                    </td>
+                    <td class="danPrice">{{tabledatas.productPrice | moneyFiler}}</td>
+                    <td>
+                        <i @click="goodNum(tabledatas,-1)" class="fa  deleteBtn" aria-hidden="true">-</i>
+                        <input v-model="tabledatas.counts" type="text" class="form-control numInput" aria-label="...">
+                        <i @click="goodNum(tabledatas,1)" class="fa  addBtn" aria-hidden="true">+</i>
+                    </td>
+                    <td>
+                        <p class="totalPrice">{{tabledatas.productPrice*tabledatas.counts | moneyFiler}}</p>
+                    </td>
+                    <td class="gongneng">
+                        <p class="deletegoods" @click="alertRadio(tabledatas.id)">删除</p>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="row tablefooter">
+                <template>
+                    <el-checkbox style="padding-left:16px" @change="checkedAllBtn(checkedAll)" v-model="checkedAll">全选</el-checkbox>
+                </template>
+                <span class="removeMuch" @click="alertMuch">删除选中的商品</span>
+                <span class="removeSaves" @click="alertMuchgoods">移到我的收藏</span>
+                <span class="servicenum">已选择<span class="goodsNum">{{goodNums}}</span>件商品</span>
+                <span class="totalclassPoin">总价：<span class="totalMoneyClass">{{totalMoney | moneyFiler}}</span></span>
+                <span @click="saveData" class="SettlementBtn">去结算</span>
+            </div>
+        </div>
+    </div>
+</div>
+<!--主页内容结束-->
+<!--底部-->
+<div class="footer">
+    <div class="ft-con">
+        <div class="ft-top">
+            <img src="images/fot-1.jpg">
+        </div>
+        <div class="ft-bo">
+            <div class="ft-b">
+                <h3>服务保障</h3>
+                <p>正品保证</p>
+                <p>7天无理由退换</p>
+                <p>退货返运费</p>
+                <p>7X15小时客户服务</p>
+
+            </div>
+            <div class="ft-b">
+                <h3>支付方式</h3>
+                <p>公司转账</p>
+                <p>货到付款</p>
+                <p>在线支付</p>
+                <p>分期付款</p>
+
+            </div>
+            <div class="ft-b">
+                <h3>商家服务</h3>
+                <p>商家入驻</p>
+                <p>培训中心</p>
+                <p>广告服务</p>
+                <p>服务市场</p>
+
+            </div>
+            <div class="ft-b">
+                <h3>服务保障</h3>
+                <p>免运费</p>
+                <p>海外配送</p>
+                <p>EMS</p>
+                <p>211限时达</p>
+
+            </div>
+
+        </div>
+        <div class="banq">
+            <p>©2016 果然新鲜 版权所有</p>
+            <p>手机版 | 本站使用<span><img src="images/ft.jpg"></span>建站搭建 | 管理登录</p>
+        </div>
+
+    </div>
+
+</div>
+<!--底部结束-->
+<script src="js/banner.js"></script>
+<script type="text/javascript" src="js/vue/vue.min.js" ></script>
+<script type="text/javascript" src="js/eleme-ui/index.js" ></script>
+<script type="text/javascript" src="js/ShoppingCart.js" ></script>
+</body>
+</html>

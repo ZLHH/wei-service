@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.productservice.dao.ShoppingCarDAO">
+
+    <resultMap  type="com.example.productservice.domain.ShoppingCar" id="carInfo">
+        <id column="id"  property="id" />
+        <id column="user_id"  property="userId" />
+        <result column="product_id"  property="productId" />
+        <result column="product_price"  property="productPrice" />
+        <result column="counts"  property="counts" />
+        <result column="product_name"  property="productName" />
+        <result column="status"  property="status" />
+    </resultMap>
+    <select id="querryAll" resultMap="carInfo">
+        select * from shopping_car where user_id=#{id} AND status=0;
+    </select>
+
+    <select id="querryAllByIds" resultMap="carInfo">
+        select * from shopping_car where product_id =#{ids} AND user_id=#{id} AND status=0
+    </select>
+
+    <insert id="save" parameterType="com.example.productservice.domain.ShoppingCar" useGeneratedKeys="true" keyProperty="id">
+        insert into shopping_car
+        (
+        `user_id`,
+        `product_id`,
+        `product_price`,
+        `counts`,
+        `create_time`,
+        `product_name`,
+        `status`
+        )
+        values
+        (
+        #{userId},
+        #{productId},
+        #{productPrice},
+        #{counts},
+        #{createTime},
+        #{productName},
+        #{status}
+        )
+    </insert>
+
+    <delete id="delete">
+        delete from shopping_car where id = #{id}
+    </delete>
+
+    <select id="queryTotal" resultType="int">
+        select count(*) from shopping_car where user_id = #{id} AND status=0
+    </select>
+
+    <update id="changeStatus">
+        update shopping_car set status = 1 where id = #{id}
+    </update>
+
+</mapper>
+
